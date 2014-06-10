@@ -1,4 +1,4 @@
-package com.autotec.thirdparty;
+package com.scalyr.log4j;
 
 import ch.qos.logback.classic.Level;
 import com.scalyr.api.logs.EventAttributes;
@@ -6,7 +6,7 @@ import com.scalyr.api.logs.Events;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
 
-public class ScalyrAppenderLog4J extends AppenderSkeleton {
+public class ScalyrAppender extends AppenderSkeleton {
     private String apiKey;
     private Integer maxBufferRam;
 
