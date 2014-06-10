@@ -1,21 +1,19 @@
-package com.scalyr.logback;
+package com.autotec.thirdparty;
 
 import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import com.scalyr.api.logs.EventAttributes;
 import com.scalyr.api.logs.Events;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.spi.LoggingEvent;
 
-/**
- * Created by steve on 4/8/14.
- */
-public class ScalyrAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
+public class ScalyrAppenderLog4J extends AppenderSkeleton {
     private String apiKey;
     private Integer maxBufferRam;
 
-    @Override protected void append(ILoggingEvent event) {
+    @Override
+    protected void append(LoggingEvent event) {
         int level = event.getLevel().toInt();
-        String message = event.getFormattedMessage();
+        String message = event.getRenderedMessage();
 
         if (level >= Level.ERROR_INT) {
             Events.error(new EventAttributes("message", "E " + message));
@@ -29,6 +27,15 @@ public class ScalyrAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
             Events.finer(new EventAttributes("message", "K " + message));
         } else {
             Events.finest(new EventAttributes("message", "L " + message));
+        }
+    }
+    public void activateOptions() {
+        if(this.apiKey != null && !"".equals(this.apiKey.trim())) {
+            // default to 4MB if not set.
+            int maxBufferRam = (this.maxBufferRam != null) ? this.maxBufferRam : 4194304;
+            Events.init(this.apiKey.trim(), maxBufferRam);
+        } else {
+            errorHandler.error("Cannot initialize logging.  No Scalyr API Key has been set.");
         }
     }
 
@@ -58,19 +65,16 @@ public class ScalyrAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
     }
 
     @Override
-    public void start() {
-        if(this.apiKey != null && !"".equals(this.apiKey.trim())) {
-            // default to 4MB if not set.
-            int maxBufferRam = (this.maxBufferRam != null) ? this.maxBufferRam : 4194304;
-            Events.init(this.apiKey.trim(), maxBufferRam);
-            super.start();
-        } else {
-            addError("Cannot initialize logging.  No Scalyr API Key has been set.");
+    public void close() {
+        if(this.closed) {
+            return;
         }
+        Events.flush();
+        this.closed = true;
     }
 
-    @Override public void stop() {
-        Events.flush();
-        super.stop();
+    @Override
+    public boolean requiresLayout() {
+        return false;
     }
 }
