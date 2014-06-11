@@ -1,9 +1,9 @@
 package com.scalyr.log4j;
 
-import ch.qos.logback.classic.Level;
 import com.scalyr.api.logs.EventAttributes;
 import com.scalyr.api.logs.Events;
 import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggingEvent;
 
 public class ScalyrAppender extends AppenderSkeleton {
