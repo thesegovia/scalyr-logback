@@ -55,7 +55,7 @@ public class ScalyrAppender extends AppenderSkeleton {
         if(maxBufferRam != null && !"".equals(maxBufferRam)) {
             maxBufferRam = maxBufferRam.toLowerCase().trim();
             if(maxBufferRam.contains("m")) {
-                this.maxBufferRam = Integer.valueOf(maxBufferRam.substring(0, maxBufferRam.indexOf("m"))) * 4194304;
+                this.maxBufferRam = Integer.valueOf(maxBufferRam.substring(0, maxBufferRam.indexOf("m"))) * 1048576;
             } else if (maxBufferRam.contains("k")) {
                 this.maxBufferRam = Integer.valueOf(maxBufferRam.substring(0, maxBufferRam.indexOf("k"))) * 1024;
             } else {
