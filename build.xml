@@ -14,12 +14,12 @@
   <target name="init">
     <!-- Create the build timestamp -->
     <tstamp/>
-    
+
     <!-- Create our output directories -->
     <mkdir dir="${build}"/>
     <mkdir dir="${dist}"/>
   </target>
-  
+
   <!-- Compile the java code from ${src} into ${build} -->
   <target name="compile" depends="init" description="Compile all Java files">
     <javac srcdir="${src}" destdir="${build}"
@@ -35,20 +35,21 @@
   </target>
 
   <!-- Build the API library -->
-  <target name="jar" depends="compile" description="Package the Scalyr logback Appender  into a .jar file">
-    <jar destfile="${dist}/scalyrLogback.jar"
-    >
-       <fileset dir="${build}"
-           includes="com/scalyr/logback/*.class"
-       />
+  <target name="jar" depends="compile" description="Package the Scalyr logback and log4J Appenders into .jar files.">
+    <jar destfile="${dist}/scalyrLogback.jar">
+       <fileset dir="${build}" includes="com/scalyr/logback/*.class"/>
        <fileset dir="${src}" includes="com/scalyr/logback/*.java"/>
    </jar>
+      <jar destfile="${dist}/scalyrLog4J.jar">
+          <fileset dir="${build}" includes="com/scalyr/log4j/*.class"/>
+          <fileset dir="${src}" includes="com/scalyr/log4j/*.java"/>
+      </jar>
   </target>
 
   <!-- cleanup target: deletes all non-source files -->
   <target name="clean" description="delete all generated files" >
     <delete dir="${build}"/>
     <delete dir="${dist}"/>
-  </target>   
+  </target>
 
 </project>
