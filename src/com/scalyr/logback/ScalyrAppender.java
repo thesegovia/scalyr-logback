@@ -10,7 +10,8 @@ import com.scalyr.api.logs.Events;
  * Created by steve on 4/8/14.
  */
 public class ScalyrAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
-    private String apiKey;
+    private String apiKey = "";
+    private String serverHost = "";
     private Integer maxBufferRam;
 
     @Override protected void append(ILoggingEvent event) {
@@ -40,6 +41,14 @@ public class ScalyrAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
         this.apiKey = apiKey;
     }
 
+    public String getServerHost() {
+        return this.serverHost;
+    }
+
+    public void setServerHost(String serverHost) {
+        this.serverHost = serverHost;
+    }
+
     public Integer getMaxBufferRam() {
         return maxBufferRam;
     }
@@ -62,7 +71,8 @@ public class ScalyrAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
         if(this.apiKey != null && !"".equals(this.apiKey.trim())) {
             // default to 4MB if not set.
             int maxBufferRam = (this.maxBufferRam != null) ? this.maxBufferRam : 4194304;
-            Events.init(this.apiKey.trim(), maxBufferRam);
+            Events.init(this.apiKey.trim(), maxBufferRam, null,
+            	new EventAttributes("serverHost", this.serverHost.trim()));
             super.start();
         } else {
             addError("Cannot initialize logging.  No Scalyr API Key has been set.");
