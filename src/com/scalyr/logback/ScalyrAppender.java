@@ -68,12 +68,17 @@ public class ScalyrAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
     @Override
     public void start() {
-        final EventAttributes serverHost = getServerHost().length() == 0 ? null :  new EventAttributes("serverHost", getServerHost());
+        final EventAttributes serverAttributes = new EventAttributes();
+        if (getServerHost().length() > 0)
+            serverAttributes.put("serverHost", getServerHost());
+        serverAttributes.put("logfile", "logback");
+        serverAttributes.put("parser", "logback");
+
         if(this.apiKey != null && !"".equals(this.apiKey.trim())) {
             // default to 4MB if not set.
             int maxBufferRam = (this.maxBufferRam != null) ? this.maxBufferRam : 4194304;
             Events.init(this.apiKey.trim(), maxBufferRam, null,
-              serverHost);
+              serverAttributes);
             super.start();
         } else {
             addError("Cannot initialize logging.  No Scalyr API Key has been set.");

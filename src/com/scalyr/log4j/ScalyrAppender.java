@@ -8,7 +8,16 @@ import org.apache.log4j.spi.LoggingEvent;
 
 public class ScalyrAppender extends AppenderSkeleton {
     private String apiKey;
+    private String serverHost = "";
     private Integer maxBufferRam;
+
+    public String getServerHost() {
+        return this.serverHost == null ? "" : this.serverHost.trim();
+    }
+
+    public void setServerHost(String serverHost) {
+        this.serverHost = serverHost;
+    }
 
     @Override
     protected void append(LoggingEvent event) {
@@ -31,9 +40,15 @@ public class ScalyrAppender extends AppenderSkeleton {
     }
     public void activateOptions() {
         if(this.apiKey != null && !"".equals(this.apiKey.trim())) {
+            final EventAttributes serverAttributes = new EventAttributes();
+            if (getServerHost().length() > 0)
+                serverAttributes.put("serverHost", getServerHost());
+            serverAttributes.put("logfile", "log4j");
+            serverAttributes.put("parser", "log4j");
+
             // default to 4MB if not set.
             int maxBufferRam = (this.maxBufferRam != null) ? this.maxBufferRam : 4194304;
-            Events.init(this.apiKey.trim(), maxBufferRam);
+            Events.init(this.apiKey.trim(), maxBufferRam, null, serverAttributes);
         } else {
             errorHandler.error("Cannot initialize logging.  No Scalyr API Key has been set.");
         }
