@@ -5,13 +5,25 @@ This library provides a simple Appender implementation to send log messages to
 the [Scalyr](https://www.scalyr.com) logging service using [logback](http://logback.qos.ch/) or [log4J](http://logging.apache.org/log4j/1.2/).
 With this library, any Java code which uses the log4j or logback APIs can easily integrate with Scalyr.
 
-To use this Appender:
 
-1) Download the Java client library from scalyr.com/binaries/scalyrApi.jar, and add it to your project.
+### Using With Maven
 
-2) Download [scalyrLogback.jar](https://github.com/scalyr/scalyr-logback/raw/master/ant_dist/scalyrLogback.jar) or 
-[scalyrLog4J.jar](https://github.com/scalyr/scalyr-logback/raw/master/ant_dist/scalyrLog4J.jar)
-and add it to your project.
+Add the following dependency to your project's pom.xml (check [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cscalyr%20logback-log4j-appenders) for the latest version):
+
+        <dependency>
+            <groupId>com.scalyr</groupId>
+            <artifactId>logback-log4j-appenders</artifactId>
+            <version>6.0.0</version>
+        </dependency>
+
+**NOTE:** You must have either the logback or log4j dependencies in your project's pom.xml as well.
+
+
+### Downloading JARs directly
+
+1) Download the Java client library from [Maven Central](https://oss.sonatype.org/content/groups/public/com/scalyr/scalyr-client/6.0.0/scalyr-client-6.0.0.jar) and add it to your project.
+
+2) Download the Appender library from [Maven Central](https://oss.sonatype.org/content/groups/public/com/scalyr/logback-log4j-appenders/6.0.0/logback-log4j-appenders-6.0.0.jar) and add it to your project.
 
 3) 
   a) LogBack: In your logback configuration file, add a com.scalyr.logback.ScalyrAppender.
@@ -23,4 +35,4 @@ and add it to your project.
 is to go to https://www.scalyr.com/parsers?parser=logback and click the "Leave It to Us" button. This will
 send a sample of your log data to the Scalyr staff, and we'll respond the same day with a custom-built parser.
 
-See [src/com/scalyr/logback/test/Test.java](https://github.com/scalyr/scalyr-logback/blob/master/src/com/scalyr/logback/test/Test.java) for usage examples.
+See [src/test/java/com/scalyr/logback/test/Test.java](https://github.com/scalyr/scalyr-logback/blob/master/src/test/java/com/scalyr/logback/test/Test.java) for usage examples.
