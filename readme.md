@@ -56,13 +56,13 @@ For log4j, you'll need:
 
 ##### Logback
 
-In your logback configuration file, add a com.scalyr.logback.ScalyrAppender. 
-See sample [logback.groovy](https://github.com/scalyr/scalyr-logback/blob/master/samples/logback.groovy)
+In your logback configuration file, add a `com.scalyr.logback.ScalyrAppender`. 
+See samples [logback.groovy](samples/logback.groovy) and [logback.xml](samples/logback.xml)
 
 ##### Log4J
 
 In your log4J configuration file, add a com.scalyr.log4j.ScalyrAppender.
-See sample [log4j.properties](https://github.com/scalyr/scalyr-logback/blob/master/samples/log4j.properties)
+See sample [log4j.properties](samples/log4j.properties)
 
 ### Parsing Rules
 
@@ -72,4 +72,4 @@ send a sample of your log data to the Scalyr staff, and we'll respond the same d
 
 ### Examples
 
-See [src/test/java/com/scalyr/logback/test/Test.java](https://github.com/scalyr/scalyr-logback/blob/master/src/test/java/com/scalyr/logback/test/Test.java) for usage examples.
+See [src/test/java/com/scalyr/logback/test/Test.java](src/test/java/com/scalyr/logback/test/Test.java) for usage examples.

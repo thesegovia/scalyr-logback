@@ -1,0 +1,18 @@
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+
+        <encoder>
+            <pattern>%-4relative [%thread] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SCALYR" class="com.scalyr.logback.ScalyrAppender">
+        <apiKey>YOUR_API_KEY_HERE</apiKey>
+    </appender>
+
+    <root level="warn">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="SCALYR"/>
+    </root>
+</configuration
