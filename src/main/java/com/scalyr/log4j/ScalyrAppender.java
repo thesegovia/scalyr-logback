@@ -9,6 +9,8 @@ import org.apache.log4j.spi.LoggingEvent;
 public class ScalyrAppender extends AppenderSkeleton {
     private String apiKey;
     private String serverHost = "";
+    private String logfile = "log4j";
+    private String parser = "log4j";
     private Integer maxBufferRam;
 
     public String getServerHost() {
@@ -18,6 +20,23 @@ public class ScalyrAppender extends AppenderSkeleton {
     public void setServerHost(String serverHost) {
         this.serverHost = serverHost;
     }
+
+    public String getLogfile() {
+        return logfile;
+    }
+
+    public void setLogfile(String logfile) {
+        this.logfile = logfile;
+    }
+
+    public String getParser() {
+        return parser;
+    }
+
+    public void setParser(String parser) {
+        this.parser = parser;
+    }
+
 
     @Override
     protected void append(LoggingEvent event) {
@@ -39,12 +58,12 @@ public class ScalyrAppender extends AppenderSkeleton {
         }
     }
     public void activateOptions() {
-        if(this.apiKey != null && !"".equals(this.apiKey.trim())) {
+        if (this.apiKey != null && !"".equals(this.apiKey.trim())) {
             final EventAttributes serverAttributes = new EventAttributes();
             if (getServerHost().length() > 0)
                 serverAttributes.put("serverHost", getServerHost());
-            serverAttributes.put("logfile", "log4j");
-            serverAttributes.put("parser", "log4j");
+            serverAttributes.put("logfile", getLogfile());
+            serverAttributes.put("parser", getParser());
 
             // default to 4MB if not set.
             int maxBufferRam = (this.maxBufferRam != null) ? this.maxBufferRam : 4194304;
@@ -67,9 +86,9 @@ public class ScalyrAppender extends AppenderSkeleton {
     }
 
     public void setMaxBufferRam(String maxBufferRam) {
-        if(maxBufferRam != null && !"".equals(maxBufferRam)) {
+        if (maxBufferRam != null && !"".equals(maxBufferRam)) {
             maxBufferRam = maxBufferRam.toLowerCase().trim();
-            if(maxBufferRam.contains("m")) {
+            if (maxBufferRam.contains("m")) {
                 this.maxBufferRam = Integer.valueOf(maxBufferRam.substring(0, maxBufferRam.indexOf("m"))) * 1048576;
             } else if (maxBufferRam.contains("k")) {
                 this.maxBufferRam = Integer.valueOf(maxBufferRam.substring(0, maxBufferRam.indexOf("k"))) * 1024;
@@ -81,7 +100,7 @@ public class ScalyrAppender extends AppenderSkeleton {
 
     @Override
     public void close() {
-        if(this.closed) {
+        if (this.closed) {
             return;
         }
         Events.flush();

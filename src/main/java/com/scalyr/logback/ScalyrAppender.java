@@ -13,6 +13,8 @@ public class ScalyrAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
     private String apiKey = "";
     private String serverHost = "";
     private Integer maxBufferRam;
+    private String logfile = "logback";
+    private String parser = "logback";
 
     @Override protected void append(ILoggingEvent event) {
         int level = event.getLevel().toInt();
@@ -66,13 +68,29 @@ public class ScalyrAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
         }
     }
 
+    public void setLogfile(String logfile) {
+        this.logfile = logfile;
+    }
+
+    public String getLogfile() {
+        return logfile;
+    }
+
+    public String getParser() {
+        return parser;
+    }
+
+    public void setParser(String parser) {
+        this.parser = parser;
+    }
+
     @Override
     public void start() {
         final EventAttributes serverAttributes = new EventAttributes();
         if (getServerHost().length() > 0)
             serverAttributes.put("serverHost", getServerHost());
-        serverAttributes.put("logfile", "logback");
-        serverAttributes.put("parser", "logback");
+        serverAttributes.put("logfile", getLogfile());
+        serverAttributes.put("parser", getParser());
 
         if(this.apiKey != null && !"".equals(this.apiKey.trim())) {
             // default to 4MB if not set.
