@@ -9,6 +9,8 @@
 
     <appender name="SCALYR" class="com.scalyr.logback.ScalyrAppender">
         <apiKey>YOUR_API_KEY_HERE</apiKey>
+        <logfile>myapp</logfile>
+        <parser>logback</parser>
     </appender>
 
     <root level="warn">

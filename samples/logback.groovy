@@ -9,5 +9,7 @@ appender("CONSOLE", ConsoleAppender) {
 }
 appender("SCALYR", ScalyrAppender) {
 	apiKey = "YOUR_API_KEY_HERE"
+    logfile = "myapp"
+    parser = "logback"
 }
 root(WARN, ["CONSOLE", "SCALYR"])
