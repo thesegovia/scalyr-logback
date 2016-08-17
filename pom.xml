@@ -4,7 +4,7 @@
     <groupId>com.scalyr</groupId>
     <artifactId>logback-log4j-appenders</artifactId>
     <packaging>jar</packaging>
-    <version>6.0.1</version>
+    <version>6.0.2-SNAPSHOT</version>
     <name>Scalyr Logback and Log4J Appenders</name>
     <description>Appenders for Logback and Log4J</description>
     <url>https://github.com/scalyr/scalyr-logback</url>
@@ -32,7 +32,7 @@
         <url>https://github.com/scalyr/scalyr-logback</url>
         <connection>scm:git:git://github.com/scalyr/scalyr-logback.git</connection>
         <developerConnection>scm:git:git@github.com:scalyr/scalyr-logback.git</developerConnection>
-        <tag>logback-log4j-appenders-6.0.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <developers>
