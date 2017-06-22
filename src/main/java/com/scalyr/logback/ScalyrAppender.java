@@ -89,7 +89,7 @@ public class ScalyrAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
     }
 
     public Layout<ILoggingEvent> getLayout() {
-        return layout
+        return layout;
     }
 
     /**
@@ -98,7 +98,7 @@ public class ScalyrAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
      * warning, info, debug, and trace, respectively) followed by the message.
      */
     public void setLayout(Layout<ILoggingEvent> layout) {
-        this.layout = layout
+        this.layout = layout;
     }
 
     @Override
@@ -106,7 +106,7 @@ public class ScalyrAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
         if (layout == null) {
             //default layout
             layout = new PatternLayout();
-            ((PatternLayout) layout).setPattern("%.-1level %msg")
+            ((PatternLayout) layout).setPattern("%.-1level %msg");
         }
 
         final EventAttributes serverAttributes = new EventAttributes();
