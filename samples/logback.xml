@@ -12,6 +12,9 @@
         <logfile>myapp</logfile>
         <parser>logback</parser>
         <serverHost>myhost</serverHost>
+        <!-- Uncomment to set an env and send to scalyr in the ServerInfo
+          <env>myenv</env>
+        -->
         <!--  Uncomment to override default layout
         <layout class="ch.qos.logback.classic.PatternLayout">
             <pattern>%-4relative [%thread] - %msg%n</pattern>

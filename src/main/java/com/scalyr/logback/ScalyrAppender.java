@@ -84,6 +84,14 @@ public class ScalyrAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
         return parser;
     }
 
+    public void setEnv(String env) {
+        this.env = env;
+    }
+
+    public String getEnv() {
+        return env;
+    }
+
     public void setParser(String parser) {
         this.parser = parser;
     }
