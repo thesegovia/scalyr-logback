@@ -12,10 +12,12 @@
         <logfile>myapp</logfile>
         <parser>logback</parser>
         <serverHost>myhost</serverHost>
-        <!-- Uncomment to set an env and send to scalyr in the ServerInfo
+        <!-- Uncomment to attach an "env" field to each log message sent to Scalyr.
+             This can be used for grouping or filtering messages by the environment 
+             that generated them.
           <env>myenv</env>
         -->
-        <!--  Uncomment to override default layout
+        <!-- Uncomment to specify a custom layout for formatting messages.
         <layout class="ch.qos.logback.classic.PatternLayout">
             <pattern>%-4relative [%thread] - %msg%n</pattern>
         </layout>
