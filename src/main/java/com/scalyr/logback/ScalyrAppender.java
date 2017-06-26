@@ -122,6 +122,7 @@ public class ScalyrAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
             serverAttributes.put("serverHost", getServerHost());
         serverAttributes.put("logfile", getLogfile());
         serverAttributes.put("parser", getParser());
+        serverAttributes.put("env", getEnv());
 
         if(this.apiKey != null && !"".equals(this.apiKey.trim())) {
             // default to 4MB if not set.
