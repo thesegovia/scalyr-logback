@@ -1,6 +1,7 @@
 package com.scalyr.logback.test;
 
 import ch.qos.logback.classic.LoggerContext;
+import com.scalyr.api.internal.ScalyrUtil;
 import com.scalyr.api.logs.Events;
 import com.scalyr.logback.ScalyrAppender;
 import org.slf4j.Logger;
@@ -23,15 +24,11 @@ public class Test {
     ch.qos.logback.classic.Logger logbackLogger = (ch.qos.logback.classic.Logger) logger;
     ScalyrAppender scalyrAppender = new ScalyrAppender();
     scalyrAppender.setContext((LoggerContext) LoggerFactory.getILoggerFactory());
+    scalyrAppender.setApiKey(API_KEY);
+    scalyrAppender.setMaxBufferRam("4m");
+    scalyrAppender.setServerHost(ScalyrUtil.getHostname());
     scalyrAppender.start();
     logbackLogger.addAppender(scalyrAppender);
-
-    // Initialize the "Events" (Scalyr logging) subsystem. Log a couple of messages, one before and one
-    // after. The first message won't appear in Scalyr.
-    logger.debug("Hello world (before).");
-    int maxBufferRam = 4 * 1024 * 1024;
-    Events.init(API_KEY, maxBufferRam);
-    logger.debug("Hello world (after).");
 
     // Write some log messages from three parallel threads, to test threaded logging.
     TestThread[] threads = new TestThread[3];
@@ -40,8 +37,8 @@ public class Test {
       threads[i].start();
     }
 
-    for (int i = 0; i < threads.length; i++) {
-      threads[i].join();
+    for (TestThread thread : threads) {
+      thread.join();
     }
 
     Events.flush();

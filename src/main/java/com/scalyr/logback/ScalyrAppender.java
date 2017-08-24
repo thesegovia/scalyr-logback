@@ -7,6 +7,7 @@ import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import com.scalyr.api.logs.EventAttributes;
 import com.scalyr.api.logs.Events;
+import com.scalyr.util.Util;
 
 /**
  * Created by steve on 4/8/14.
@@ -18,6 +19,7 @@ public class ScalyrAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
     private Integer maxBufferRam;
     private String logfile = "logback";
     private String parser = "logback";
+    private String extraAttributes = "";
     private Layout<ILoggingEvent> layout;
 
     @Override protected void append(ILoggingEvent event) {
@@ -39,75 +41,67 @@ public class ScalyrAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
         }
     }
 
-    public String getApiKey() {
-        return this.apiKey;
-    }
+    public String getApiKey() { return this.apiKey; }
 
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
-    }
+    public void setApiKey(String apiKey) { this.apiKey = apiKey; }
 
-    public String getServerHost() {
-        return this.serverHost == null ? "" : this.serverHost.trim();
-    }
+    public String getServerHost() { return this.serverHost == null ? "" : this.serverHost.trim(); }
 
-    public void setServerHost(String serverHost) {
-        this.serverHost = serverHost;
-    }
+    public void setServerHost(String serverHost) { this.serverHost = serverHost; }
 
-    public Integer getMaxBufferRam() {
-        return maxBufferRam;
-    }
+    public Integer getMaxBufferRam() { return maxBufferRam; }
 
-    public void setMaxBufferRam(String maxBufferRam) {
-        if(maxBufferRam != null && !"".equals(maxBufferRam)) {
-            maxBufferRam = maxBufferRam.toLowerCase().trim();
-            if(maxBufferRam.contains("m")) {
-                this.maxBufferRam = Integer.valueOf(maxBufferRam.substring(0, maxBufferRam.indexOf("m"))) * 1048576;
-            } else if (maxBufferRam.contains("k")) {
-                this.maxBufferRam = Integer.valueOf(maxBufferRam.substring(0, maxBufferRam.indexOf("k"))) * 1024;
-            } else {
-                this.maxBufferRam = Integer.valueOf(maxBufferRam);
-            }
-        }
-    }
+    public void setMaxBufferRam(String maxBufferRam) { this.maxBufferRam = Util.stringToIntMemory(maxBufferRam); }
 
-    public void setLogfile(String logfile) {
-        this.logfile = logfile;
-    }
+    public void setLogfile(String logfile) { this.logfile = logfile; }
 
-    public String getLogfile() {
-        return logfile;
-    }
+    public String getLogfile() { return logfile; }
 
-    public String getParser() {
-        return parser;
-    }
+    public String getParser() { return parser; }
 
-    public void setEnv(String env) {
-        this.env = env;
-    }
+    public void setEnv(String env) { this.env = env; }
 
-    public String getEnv() {
-        return env;
-    }
+    public String getEnv() { return env; }
 
-    public void setParser(String parser) {
-        this.parser = parser;
-    }
+  /**
+   * Use this to describe any additional server attributes. Takes a string that is kv pairs separated by a comma e.g.:
+   * <pre>
+   *   appName=appofdoom,zodiac=rooster
+   * </pre>
+   * An example of what to put in your logback.xml:
+   <pre><code>
+   &lt;configuration&gt;
+     &lt;appender name="scalyr" class="com.scalyr.logback.ScalyrAppender"&gt;
+       &lt;apiKey&gt;YOUR KEY&lt;/apiKey&gt;
+       &lt;extraAttributes&gt;appName=appofdoom,zodiac=rooster&lt;/extraAttributes&gt;
+       ...
+     &lt;/appender&gt;
+   &lt;/configuration&gt;
+   </code></pre>
+   * <p>
+   * The extraAttributes will be appended to the serverAttributes list and will be searchable in scalyr by a query like:
+   * <pre>
+   *   $zodiac == "rooster" "hello world"
+   * </pre>
+   *
+   * @param extraAttributes String of key-value pairs
+   */
+    public void setExtraAttributes(String extraAttributes) { this.extraAttributes = extraAttributes; }
 
-    public Layout<ILoggingEvent> getLayout() {
-        return layout;
-    }
+    public String getExtraAttributes() { return extraAttributes; }
+
+    public void setParser(String parser) { this.parser = parser; }
+
+    public Layout<ILoggingEvent> getLayout() { return layout; }
 
     /**
      * Sets the Logback layout to use for this appender.  The default layout
      * consists of the first character of the level name (E, W, I, D, T for error,
      * warning, info, debug, and trace, respectively) followed by the message.
+     *
+     * @param layout the Layout to use
      */
-    public void setLayout(Layout<ILoggingEvent> layout) {
-        this.layout = layout;
-    }
+    public void setLayout(Layout<ILoggingEvent> layout) { this.layout = layout; }
 
     @Override
     public void start() {
@@ -123,12 +117,12 @@ public class ScalyrAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
         serverAttributes.put("logfile", getLogfile());
         serverAttributes.put("parser", getParser());
         serverAttributes.put("env", getEnv());
+        serverAttributes.addAll(Util.makeEventAttributesFromString(getExtraAttributes()));
 
         if(this.apiKey != null && !"".equals(this.apiKey.trim())) {
             // default to 4MB if not set.
             int maxBufferRam = (this.maxBufferRam != null) ? this.maxBufferRam : 4194304;
-            Events.init(this.apiKey.trim(), maxBufferRam, null,
-              serverAttributes);
+            Events.init(this.apiKey.trim(), maxBufferRam, null, serverAttributes);
             super.start();
         } else {
             addError("Cannot initialize logging.  No Scalyr API Key has been set.");
