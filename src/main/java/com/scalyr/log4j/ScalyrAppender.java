@@ -3,8 +3,11 @@ package com.scalyr.log4j;
 import com.scalyr.api.logs.EventAttributes;
 import com.scalyr.api.logs.Events;
 import com.scalyr.util.Util;
+import java.io.Serializable;
 import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Layout;
 import org.apache.log4j.Level;
+import org.apache.log4j.PatternLayout;
 import org.apache.log4j.spi.LoggingEvent;
 
 import java.util.Map;
@@ -17,6 +20,7 @@ public class ScalyrAppender extends AppenderSkeleton {
     private String parser = "log4j";
     private String extraAttributes = "";
     private Integer maxBufferRam;
+    private Layout layout;
 
     public String getServerHost() { return this.serverHost == null ? "" : this.serverHost.trim(); }
 
@@ -33,6 +37,10 @@ public class ScalyrAppender extends AppenderSkeleton {
     public void setEnv(String env) { this.env = env; }
 
     public String getEnv() { return env; }
+
+    public void setLayout(Layout layout) { this.layout = layout; }
+
+    public Layout getLayout() { return layout; }
 
     /**
      * Use this to describe any additional server attributes. Takes a string that is kv pairs separated by a comma e.g.:
@@ -63,29 +71,48 @@ public class ScalyrAppender extends AppenderSkeleton {
 
     @Override
     protected void append(LoggingEvent event) {
-        int level = event.getLevel().toInt();
-        String message = event.getRenderedMessage();
+        if (layout == null) {
+            int level = event.getLevel().toInt();
+            String message = event.getRenderedMessage();
 
-        if (level >= Level.ERROR_INT) {
-            Events.error(new EventAttributes("message", "E " + message));
-        } else if (level >= Level.WARN_INT) {
-            Events.warning(new EventAttributes("message", "W " + message));
-        } else if (level >= Level.INFO_INT) {
-            Events.info(new EventAttributes("message", "I " + message));
-        } else if (level >= Level.DEBUG_INT) {
-            Events.fine(new EventAttributes("message", "J " + message));
-        } else if (level >= Level.TRACE_INT) {
-            Events.finer(new EventAttributes("message", "K " + message));
+            if (level >= Level.ERROR_INT) {
+                Events.error(new EventAttributes("message", "E " + message));
+            } else if (level >= Level.WARN_INT) {
+                Events.warning(new EventAttributes("message", "W " + message));
+            } else if (level >= Level.INFO_INT) {
+                Events.info(new EventAttributes("message", "I " + message));
+            } else if (level >= Level.DEBUG_INT) {
+                Events.fine(new EventAttributes("message", "J " + message));
+            } else if (level >= Level.TRACE_INT) {
+                Events.finer(new EventAttributes("message", "K " + message));
+            } else {
+                Events.finest(new EventAttributes("message", "L " + message));
+            }
         } else {
-            Events.finest(new EventAttributes("message", "L " + message));
+            int level = event.getLevel().toInt();
+            String message = layout.format(event);
+
+            if (level >= Level.ERROR_INT) {
+                Events.error(attributesForMessage(message));
+            } else if (level >= Level.WARN_INT) {
+                Events.warning(attributesForMessage(message));
+            } else if (level >= Level.INFO_INT) {
+                Events.info(attributesForMessage(message));
+            } else if (level >= Level.DEBUG_INT) {
+                Events.fine(attributesForMessage(message));
+            } else if (level >= Level.TRACE_INT) {
+                Events.finer(attributesForMessage(message));
+            } else {
+                Events.finest(attributesForMessage(message));
+            }
         }
     }
+
     public void activateOptions() {
         if (this.apiKey != null && !"".equals(this.apiKey.trim())) {
             final EventAttributes serverAttributes = new EventAttributes();
             if (getServerHost().length() > 0)
                 serverAttributes.put("serverHost", getServerHost());
-            serverAttributes.put("logfile", getLogfile());
             serverAttributes.put("parser", getParser());
             serverAttributes.put("env", getEnv());
             serverAttributes.addAll(Util.makeEventAttributesFromString(getExtraAttributes()));
@@ -96,6 +123,12 @@ public class ScalyrAppender extends AppenderSkeleton {
         } else {
             errorHandler.error("Cannot initialize logging.  No Scalyr API Key has been set.");
         }
+    }
+
+    private EventAttributes attributesForMessage(String message) {
+        return new EventAttributes(
+            "message", message,
+            "logfile", getLogfile());
     }
 
     public String getApiKey() {
@@ -125,6 +158,6 @@ public class ScalyrAppender extends AppenderSkeleton {
 
     @Override
     public boolean requiresLayout() {
-        return false;
+        return true;
     }
 }
